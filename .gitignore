@@ -6,7 +6,6 @@ bin-release/
 /data/
 /saved_models/
 
-
 # Other files and folders
 .settings/
 
