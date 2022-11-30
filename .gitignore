@@ -3,7 +3,8 @@ bin-debug/
 bin-release/
 [Oo]bj/
 [Bb]in/
-data/
+/data/
+/saved_models/
 
 # Other files and folders
 .settings/
