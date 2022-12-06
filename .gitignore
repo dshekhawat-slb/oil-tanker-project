@@ -6,6 +6,13 @@ bin-release/
 
 # Other files and folders
 .settings/
+data/
+.vscode/
+.idea/
+*Zone.Identifier
+Oil Tanks/
+**/.ipynb_checkpoints/
+**/__pycache__/
 
 # Executables
 *.swf

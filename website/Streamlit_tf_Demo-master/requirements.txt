@@ -1,0 +1,14 @@
+#for streamlit
+streamlit==1.2.0
+streamlit-webrtc==0.31.3
+av
+
+#for Deep learning model
+tensorflow==2.5.1
+
+#Image
+Pillow
+
+#other
+numpy==1.19.5
+
