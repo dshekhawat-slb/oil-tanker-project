@@ -9,7 +9,7 @@ import os
 
 st.set_page_config(layout="wide")
 
-st.title("🕵️‍♂️ Oil Tanker Detection")
+st.title("🕵️‍♂️ Oil Tank Detection")
 # col1, col2, col3, col4, col5, = st.columns([5,1,1,1,1])
 # # col3, col4, col5, col6 =st.columns(4)
 # with col1:
