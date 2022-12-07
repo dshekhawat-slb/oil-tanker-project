@@ -152,33 +152,55 @@ def get_final_pred_image(img_test_path,model, draw_bbox=True):
 
 # im_pred_final, l_contours = get_final_pred_image(img_path)
 def find_fill_percent(img_cropped):
-    lab = cv2.cvtColor(img_cropped, cv2.COLOR_BGR2LAB).astype(np.float32)
+    lab = cv2.cvtColor(img_cropped, cv2.COLOR_RGB2LAB).astype(np.float32)
     l1 = lab[:,:,0]*100/255
     a = lab[:,:,1]-128
     b = lab[:,:,2]-128
 
-    lab[:,:,0] = lab[:,:,0]*100/255
-    lab[:,:,1]= lab[:,:,1]-128
-    lab[:,:,2] = lab[:,:,2]-128
-    #calculation
-    mean_a = np.mean(a)
-    mean_b = np.mean(b)
-    #mask creation
-    mask = np.zeros(l1.shape)
-    mask[l1<np.mean(l1)-np.std(l1)/3] = 1
+    # lab[:,:,0] = lab[:,:,0]*100/255
+    # lab[:,:,1]= lab[:,:,1]-128
+    # lab[:,:,2] = lab[:,:,2]-128
+    # #calculation
+    # mean_a = np.mean(a)
+    # mean_b = np.mean(b)
+    # #mask creation
+    # mask = np.zeros(l1.shape)
+    # mask[l1<np.mean(l1)-np.std(l1)/3] = 1
 
-    #mask = cv2.inRange(lab, (0, -128, -128), (np.mean(l1)-np.std(l1)/3, 127, np.mean(b)-np.std(b)/3))
+    # #mask = cv2.inRange(lab, (0, -128, -128), (np.mean(l1)-np.std(l1)/3, 127, np.mean(b)-np.std(b)/3))
 
 
 
+
+    # #morphological operation
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
+    # erosion= cv2.erode(mask,kernel)
+    # #morphological operation
+    # kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
+    # dilated = cv2.dilate(erosion, kernel)
+    # mask_8bit = np.uint8(dilated*255)
+    # #find contours of shadow
+
+    lab = np.stack([l1,a,b], axis = 2).astype('int16')
+    treshold_mean = 9
+    if (np.mean(a) + np.mean(b)) < treshold_mean:
+      frame_threshold = np.zeros(l1.shape)
+      frame_threshold[l1<np.mean(l1)-np.std(l1)/3] = 1
+    else:
+      frame_threshold = cv2.inRange(lab, (0, -128, -128), (np.mean(l1)-np.std(l1)/3,
+                                                     127, np.mean(b)-np.std(b)/3))
+
+    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(2,2))
+    cv2.morphologyEx(frame_threshold,cv2.MORPH_CLOSE,kernel,frame_threshold)
+    cv2.morphologyEx(frame_threshold,cv2.MORPH_OPEN,kernel,frame_threshold)
+    #erosion= cv2.erode(frame_threshold,kernel)
     #morphological operation
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(5,5))
-    erosion= cv2.erode(mask,kernel)
-    #morphological operation
-    kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(6,6))
-    dilated = cv2.dilate(erosion, kernel)
-    mask_8bit = np.uint8(dilated*255)
-    #find contours of shadow
+    #kernel = cv2.getStructuringElement(cv2.MORPH_ELLIPSE,(4,4))
+    #dilated = cv2.dilate(frame_threshold, kernel)
+    mask_8bit = np.uint8(frame_threshold*255)
+
+
+
     contours_shadow, hierarchy_shadow = cv2.findContours(mask_8bit, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     #area per contour for every cropped tank image
     contour_area = []
@@ -211,8 +233,14 @@ def final_image(img_path,model, bbox=True,shadow=True, volume_est=True):
     #RGB to LAB conversion
     tank_fill_perc,outer_contour,inner_contour = find_fill_percent(img_cropped)
 
-    img_cropped_mask = cv2.fillPoly(img_cropped_mask,[outer_contour],(255,0,0))
-    img_cropped_mask = cv2.fillPoly(img_cropped_mask,[inner_contour],(0,255,0))
+    # img_cropped_mask = cv2.fillPoly(img_cropped_mask,[outer_contour],(255,0,0))
+    # img_cropped_mask = cv2.fillPoly(img_cropped_mask,[inner_contour],(0,255,0))
+
+    if len(outer_contour)>0:
+      img_cropped_mask = cv2.fillPoly(img_cropped_mask,[outer_contour],(255,0,0))
+    if len(inner_contour)>0:
+      img_cropped_mask = cv2.fillPoly(img_cropped_mask,[inner_contour],(0,255,0))
+
 
     im_mask[x_min:x_max,y_min:y_max,:]=img_cropped_mask
 
