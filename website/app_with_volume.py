@@ -285,9 +285,9 @@ if uploaded_file:
         #img_pred_final = get_tanks(uploaded_file)
         with col2:
             st.write("Voila!! Here, is our prediction of oil tanks.")
-            checkbox_pred_bbox = st.checkbox('Predict Bbox',value=True)
+            checkbox_pred_bbox = st.checkbox('Predict Bbox',value=False)
             checkbox_pred_shadow = st.checkbox('Predict Shadows',value=False)
-            checkbox_pred_volume = st.checkbox('Predict Volume in Tanks',value=False)
+            checkbox_pred_volume = st.checkbox('Predict Volume in Tanks',value=True)
             #st.image(img_pred_final, width=405)
 
             img_pred_final_vol = final_image(uploaded_file,
