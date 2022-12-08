@@ -182,7 +182,7 @@ def find_fill_percent(img_cropped):
     # #find contours of shadow
 
     lab = np.stack([l1,a,b], axis = 2).astype('int16')
-    treshold_mean = 9
+    treshold_mean = 3
     if (np.mean(a) + np.mean(b)) < treshold_mean:
       frame_threshold = np.zeros(l1.shape)
       frame_threshold[l1<np.mean(l1)-np.std(l1)/3] = 1
