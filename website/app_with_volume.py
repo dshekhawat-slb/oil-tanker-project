@@ -9,7 +9,7 @@ import os
 
 st.set_page_config(layout="wide")
 
-st.title("🕵️‍♂️ Oil Tanker Detection")
+st.title("🕵️‍♂️ Oil Tank Detection")
 # col1, col2, col3, col4, col5, = st.columns([5,1,1,1,1])
 # # col3, col4, col5, col6 =st.columns(4)
 # with col1:
@@ -182,7 +182,7 @@ def find_fill_percent(img_cropped):
     # #find contours of shadow
 
     lab = np.stack([l1,a,b], axis = 2).astype('int16')
-    treshold_mean = 9
+    treshold_mean = 3
     if (np.mean(a) + np.mean(b)) < treshold_mean:
       frame_threshold = np.zeros(l1.shape)
       frame_threshold[l1<np.mean(l1)-np.std(l1)/3] = 1
